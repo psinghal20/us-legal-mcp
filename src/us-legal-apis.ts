@@ -401,15 +401,17 @@ export class CongressAPI {
     limit: number = 20,
   ): Promise<CongressBill[]> {
     try {
+      // Default to current Congress (119th) if not specified
+      const congressNum = congress || 119;
       const params = new URLSearchParams({
         limit: limit.toString(),
         format: "json",
+        sort: "updateDate+desc",
         ...(this.apiKey && { api_key: this.apiKey }),
-        ...(congress && { congress: congress.toString() }),
       });
 
       const response = await axios.get(
-        `${API_ENDPOINTS.CONGRESS}/bill?${params}`,
+        `${API_ENDPOINTS.CONGRESS}/bill/${congressNum}?${params}`,
       );
 
       return (
@@ -552,13 +554,13 @@ export class FederalRegisterAPI {
       const fetchLimit = Math.min(limit * 3, 100);
 
       const params = new URLSearchParams({
-        q: query,
+        "conditions[term]": query,
         per_page: fetchLimit.toString(),
         order: "relevance",
       });
 
       const response = await axios.get(
-        `${API_ENDPOINTS.FEDERAL_REGISTER}/documents?${params}`,
+        `${API_ENDPOINTS.FEDERAL_REGISTER}/documents.json?${params}`,
       );
 
       const documents = (response.data.results || []).map((doc: any) => ({
@@ -613,7 +615,7 @@ export class FederalRegisterAPI {
       });
 
       const response = await axios.get(
-        `${API_ENDPOINTS.FEDERAL_REGISTER}/documents?${params}`,
+        `${API_ENDPOINTS.FEDERAL_REGISTER}/documents.json?${params}`,
       );
 
       return (
