@@ -123,7 +123,7 @@ export const API_ENDPOINTS = {
   US_CODE: "https://uscode.house.gov/api",
   REGULATIONS_GOV: "https://api.regulations.gov/v4",
   GPO: "https://api.govinfo.gov",
-  COURT_LISTENER: "https://www.courtlistener.com/api/rest/v3",
+  COURT_LISTENER: "https://www.courtlistener.com/api/rest/v4",
 } as const;
 
 // Types for US Legal Data
@@ -770,8 +770,8 @@ export class CourtListenerAPI {
       const params = new URLSearchParams({
         q: query,
         type: "o", // 'o' for opinions
-        page_size: limit.toString(),
-        ordering: "-date_filed",
+        hit: limit.toString(), // V4 uses 'hit' instead of 'page_size'
+        order_by: "dateFiled desc",
         ...(court && { court: court }),
       });
 
@@ -842,8 +842,8 @@ export class CourtListenerAPI {
     try {
       const params = new URLSearchParams({
         type: "o", // 'o' for opinions
-        page_size: limit.toString(),
-        ordering: "-date_filed",
+        hit: limit.toString(), // V4 uses 'hit' instead of 'page_size'
+        order_by: "dateFiled desc",
         ...(court && { court: court }),
       });
 
