@@ -559,7 +559,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             congress: {
               type: "number",
-              description: "Congress number (e.g., 118 for current Congress)",
+              description:
+                "Congress session number (defaults to 119th/current). Use 118 for previous congress, 117 for the one before, etc.",
               minimum: 100,
               maximum: 120,
             },

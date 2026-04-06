@@ -262,19 +262,22 @@ export class CongressAPI {
     limit: number = 20,
   ): Promise<CongressBill[]> {
     try {
-      // Get more results than needed for filtering (increased for better relevance)
-      const fetchLimit = Math.min(limit * 5, 250);
+      // Default to current congress (119th) so we get relevant recent bills
+      const congressNum = congress || 119;
+
+      // Fetch max allowed (250) to give client-side scoring more bills to work with
+      const fetchLimit = 250;
 
       const params = new URLSearchParams({
-        q: query,
         limit: fetchLimit.toString(),
+        sort: "updateDate+desc",
         format: "json",
         ...(this.apiKey && { api_key: this.apiKey }),
-        ...(congress && { congress: congress.toString() }),
       });
 
+      // Use /v3/bill/{congress} endpoint for targeted results
       const response = await axios.get(
-        `${API_ENDPOINTS.CONGRESS}/bill?${params}`,
+        `${API_ENDPOINTS.CONGRESS}/bill/${congressNum}?${params}`,
       );
 
       const bills = (response.data.bills || []).map((bill: any) => ({
